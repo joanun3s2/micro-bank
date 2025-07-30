@@ -1,0 +1,87 @@
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: '${ZOOKEEPER_CLIENT_PORT}'
+    ports:
+      - '${ZOOKEEPER_CLIENT_PORT}:${ZOOKEEPER_CLIENT_PORT}'
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    ports:
+      - '${KAFKA_CLIENT_PORT}:${KAFKA_CLIENT_PORT}'
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: '${KAFKA_BROKER_ID}'
+      KAFKA_ZOOKEEPER_CONNECT: '${KAFKA_ZOOKEEPER_CONNECT}'
+      KAFKA_ADVERTISED_LISTENERS: '${KAFKA_ADVERTISED_LISTENERS}'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: '${KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR}'
+
+  client-database:
+    container_name: client-database
+    environment:
+      POSTGRES_USER: ${CLIENT_DATABASE_USER}
+      POSTGRES_PASSWORD: ${CLIENT_DATABASE_PASSWORD}
+      POSTGRES_DB: ${CLIENT_DATABASE_NAME}
+    image: postgres
+    ports:
+      - '${CLIENT_DATABASE_PORT}:5432'
+    restart: 'always'
+  
+  client-service:
+    build:
+      context: service-client
+      dockerfile: Dockerfile
+    ports:
+      - '${CLIENT_PORT}:${CLIENT_PORT}'
+    environment:
+      - CLIENT_DATABASE_HOST=client-database
+      - CLIENT_DATABASE_NAME=${CLIENT_DATABASE_NAME}
+      - CLIENT_DATABASE_USER=${CLIENT_DATABASE_USER}
+      - CLIENT_DATABASE_PASSWORD=${CLIENT_DATABASE_PASSWORD}
+      - CLIENT_DATABASE_PORT=5432
+      - KAFKA_BROKER=${KAFKA_BROKER}  
+    env_file:
+      - .env
+    volumes:
+      - ./service-client:/app
+      - /app/node_modules
+    command: npm run start:dev
+    depends_on:
+      - client-database
+      - kafka
+
+  transaction-database:
+    container_name: transaction-database
+    environment:
+      POSTGRES_USER: ${TRANSACTION_DATABASE_USER}
+      POSTGRES_PASSWORD: ${TRANSACTION_DATABASE_PASSWORD}
+      POSTGRES_DB: ${TRANSACTION_DATABASE_NAME}
+    image: postgres
+    ports:
+      - '${TRANSACTION_DATABASE_PORT}:5433'
+    restart: 'always'
+  
+  transaction-service:
+    build:
+      context: service-transaction
+      dockerfile: Dockerfile
+    ports:
+      - '${TRANSACTION_PORT}:${TRANSACTION_PORT}'
+    environment:
+      - TRANSACTION_DATABASE_HOST=transaction-database
+      - TRANSACTION_DATABASE_NAME=${TRANSACTION_DATABASE_NAME}
+      - TRANSACTION_DATABASE_USER=${TRANSACTION_DATABASE_USER}
+      - TRANSACTION_DATABASE_PASSWORD=${TRANSACTION_DATABASE_PASSWORD}
+      - TRANSACTION_DATABASE_PORT=5432
+      - KAFKA_BROKER=${KAFKA_BROKER}  
+    env_file:
+      - .env
+    volumes:
+      - ./service-transaction:/app
+      - /app/node_modules
+    command: npm run start:dev
+    depends_on:
+      - transaction-database
+      - kafka
