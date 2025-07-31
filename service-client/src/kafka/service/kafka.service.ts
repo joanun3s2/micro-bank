@@ -12,34 +12,6 @@ export class KafkaService {
 
   sendMessage(topic: string, message: any) {
     console.log(`Sending message to Kafka topic: ${topic}`);
-    this.kafkaClient.emit(topic, message);
+    this.kafkaClient.emit(topic, JSON.stringify(message));
   }
-
-  // private kafka = new Kafka({
-  //   brokers: [this.configService.get('KAFKA_BROKER') || 'kafka:9092'],
-  // });
-  // private producer = this.kafka.producer();
-
-  // async onModuleInit() {
-  //   await this.producer.connect();
-  // }
-
-  // async sendMessage(topic: string, message: any) {
-  //   await this.producer.send({
-  //     topic,
-  //     messages: [{ value: JSON.stringify(message) }],
-  //   });
-  // }
-
-  //------------------------------------------------------------
-
-  // constructor(
-  //   private readonly kafkaClient: ClientKafka,
-  //   private readonly configService: ConfigService,
-  // ) {}
-
-  // async sendMessage(topic: string, message: any) {
-  //   console.log(`Sending message to Kafka topic: ${topic}`);
-  //   this.kafkaClient.emit(topic, message);
-  // }
 }

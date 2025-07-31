@@ -13,21 +13,30 @@ export const seed = async (dataSource: DataSource) => {
   const userSeed = [
     {
       sourceId: 1,
-      firstName: 'Timber',
+      name: 'Timber Saw',
+      email: 'timber@me.com',
+      address: 'Rua A, 123',
+      age: 27,
     },
     {
       sourceId: 2,
-      firstName: 'Joao',
+      name: 'Joao Paulo',
+      email: 'joao@me.com.br',
+      address: 'Rua B, 456',
+      age: 26,
     },
     {
       sourceId: 3,
-      firstName: 'Bruno',
+      name: 'Bruno Loomi',
+      email: 'bruno@me.com',
+      address: 'Rua C, 789',
+      age: 19,
     },
   ];
 
   for (const userItem of userSeed) {
     const existing = await userRepository.findOneBy({
-      firstName: userItem.firstName,
+      name: userItem.name,
     });
 
     if (existing) {

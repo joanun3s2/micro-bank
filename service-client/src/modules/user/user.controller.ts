@@ -21,13 +21,21 @@ export class UserController {
   }
 
   @Post()
-  create(@Body() createDto: Partial<User>) {
-    return this.userService.create(createDto);
+  async create(@Body() createDto: Partial<User>) {
+    const result = await this.userService.create(createDto);
+
+    this.kafkaService.sendMessage('user_created', result);
+
+    return result;
   }
 
   @Patch(':id')
-  update(@Param('id') id: number, @Body() createDto: Partial<User>) {
-    return this.userService.update(id, createDto);
+  async update(@Param('id') id: number, @Body() createDto: Partial<User>) {
+    const result = await this.userService.update(id, createDto);
+
+    this.kafkaService.sendMessage('user_updated', result);
+
+    return result;
   }
 
   //TODO: work on this

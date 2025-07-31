@@ -1,12 +1,24 @@
 import { Controller } from '@nestjs/common';
-import { EventPattern } from '@nestjs/microservices';
+import { MessagePattern, Payload } from '@nestjs/microservices';
+import { UserService } from './user.service';
+import { User } from './user.entity';
 
-@Controller('user')
+@Controller('users')
 export class UserController {
-  constructor() {}
+  constructor(private readonly userService: UserService) {}
 
-  @EventPattern('user_created')
-  handleUserCreated(message: any) {
-    console.log(message);
+  @MessagePattern('user_created')
+  async handleUserCreated(user: any) {
+    return await this.userService.create({ ...user, sourceId: user.id });
+  }
+
+  @MessagePattern('user_updated')
+  async handleUserUpdated(@Payload() user: Partial<User>) {
+    return await this.userService.update(user.id, user);
+  }
+
+  @MessagePattern('user_deleted')
+  async handleUserDeleted(message: any) {
+    return await this.userService.remove(message.value as number);
   }
 }

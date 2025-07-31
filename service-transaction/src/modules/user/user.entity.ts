@@ -8,7 +8,16 @@ export class User extends BaseEntity {
   sourceId: number;
 
   @Column()
-  firstName: string;
+  name: string;
+
+  @Column()
+  email: string;
+
+  @Column()
+  address: string;
+
+  @Column()
+  age: number;
 
   @OneToOne(() => BankingDetails)
   @JoinColumn()
