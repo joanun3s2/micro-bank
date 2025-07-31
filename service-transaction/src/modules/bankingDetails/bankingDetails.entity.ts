@@ -1,14 +1,13 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from '../common/base.entity';
 import { AccountType } from '../../utils/enum/bankingDetails.enum';
+import { User } from '../user/user.entity';
 
 @Entity()
 export class BankingDetails extends BaseEntity {
-  @Column()
-  sourceId: number;
-
-  @Column()
-  userId: number;
+  @ManyToOne(() => User, (user) => user.bankingDetails)
+  @JoinColumn({ name: 'userId' })
+  user: User;
 
   @Column({
     type: 'enum',

@@ -29,7 +29,9 @@ export const seed = async (dataSource: DataSource) => {
     },
   ];
 
-  for (const userItem of userSeed) {
+  const createdUsers: User[] = [];
+
+  for await (const userItem of userSeed) {
     const existing = await userRepository.findOneBy({
       name: userItem.name,
     });
@@ -39,26 +41,28 @@ export const seed = async (dataSource: DataSource) => {
     }
 
     const user = userRepository.create(userItem);
-    await userRepository.save(user);
+    const userCreated = await userRepository.save(user);
+
+    createdUsers.push(userCreated);
   }
 
   console.log('Seeded users.');
 
   const bankingDetailsSeed = [
     {
-      userId: 1,
+      user: createdUsers[0],
       accountType: AccountType.CORRENTE,
       agency: 12,
       accountNumber: 5678,
     },
     {
-      userId: 2,
+      user: createdUsers[1],
       accountType: AccountType.POUPANCA,
       agency: 12,
       accountNumber: 1234,
     },
     {
-      userId: 3,
+      user: createdUsers[2],
       accountType: AccountType.CORRENTE,
       agency: 34,
       accountNumber: 9012,
@@ -67,7 +71,8 @@ export const seed = async (dataSource: DataSource) => {
 
   for (const bankingDetailsItem of bankingDetailsSeed) {
     const existing = await bankingDetailsRepository.findOneBy({
-      userId: bankingDetailsItem.userId,
+      accountNumber: bankingDetailsItem.accountNumber,
+      agency: bankingDetailsItem.agency,
     });
 
     if (existing) {

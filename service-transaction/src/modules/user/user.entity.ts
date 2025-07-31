@@ -1,4 +1,4 @@
-import { Entity, Column, OneToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, OneToMany } from 'typeorm';
 import { BaseEntity } from '../common/base.entity';
 import { BankingDetails } from '../bankingDetails/bankingDetails.entity';
 
@@ -19,7 +19,6 @@ export class User extends BaseEntity {
   @Column()
   age: number;
 
-  @OneToOne(() => BankingDetails)
-  @JoinColumn()
-  bankingDetails: BankingDetails;
+  @OneToMany(() => BankingDetails, (bankingDetails) => bankingDetails.user)
+  bankingDetails: BankingDetails[];
 }
