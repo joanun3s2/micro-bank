@@ -6,10 +6,13 @@ import { BankingDetails } from '../bankingDetails/bankingDetails';
 @Entity()
 export class User extends BaseEntity {
   @Column()
-  firstName: string;
+  name: string;
 
   @Column()
-  lastName: string;
+  email: string;
+
+  @Column()
+  address: string;
 
   @Column()
   age: number;

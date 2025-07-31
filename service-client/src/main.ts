@@ -1,6 +1,5 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { Kafka } from 'kafkajs';
 import 'reflect-metadata';
 import { ConfigService } from './config/service/config.service';
 
