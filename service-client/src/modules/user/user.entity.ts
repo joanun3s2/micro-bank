@@ -16,6 +16,9 @@ export class User extends BaseEntity {
   @Column()
   age: number;
 
+  @Column({ type: 'bytea', nullable: true })
+  profilePicture: Buffer;
+
   @OneToMany(() => BankingDetails, (bankingDetails) => bankingDetails.user)
   bankingDetails: BankingDetails[];
 }

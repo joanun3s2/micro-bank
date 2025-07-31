@@ -53,4 +53,19 @@ export class UserService {
 
     return await this.userRepository.save(entity);
   }
+
+  async updateProfilePicture(
+    id: number,
+    file: Express.Multer.File,
+  ): Promise<User | null> {
+    const entity = await this.userRepository.findOneBy({ id });
+
+    if (!entity) {
+      throw new NotFoundException('User not found');
+    }
+
+    Object.assign(entity, { profilePicture: file.buffer });
+
+    return await this.userRepository.save(entity);
+  }
 }
