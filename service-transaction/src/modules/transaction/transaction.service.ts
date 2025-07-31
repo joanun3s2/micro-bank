@@ -6,12 +6,17 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Transaction } from './transaction.entity';
+import { createTransactionDto } from './createTransaction.dto';
+import { BankingDetailsService } from '../bankingDetails/bankingDetails.service';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class TransactionService {
   constructor(
     @InjectRepository(Transaction)
     private readonly transactionRepository: Repository<Transaction>,
+    private readonly bankingDetailsService: BankingDetailsService,
+    private readonly userService: UserService,
   ) {}
 
   async findOne(id: number): Promise<Transaction | undefined> {
@@ -28,18 +33,52 @@ export class TransactionService {
     await this.transactionRepository.delete(id);
   }
 
-  async create(createDto: Partial<Transaction>): Promise<Transaction> {
-    //   TODO: Add validation to not allow duplicate in less than 5 minutes
+  async create(createDto: createTransactionDto): Promise<Transaction> {
+    if (createDto.amount <= 0) {
+      throw new ForbiddenException('Amount must be greater than 0');
+    }
 
-    //   const existing = await this.transactionRepository.findOneBy({
-    //     name: createDto.name,
-    //   });
+    const senderBankingDetail = await this.bankingDetailsService.findOneBy({
+      where: {
+        accountNumber: createDto.senderAccountNumber,
+        agency: createDto.senderAgency,
+        accountType: createDto.senderAccountType,
+      },
+    });
 
-    //   if (existing) {
-    //     throw new ForbiddenException('Transaction already exists');
-    //   }
+    const receiverBankingDetail = await this.bankingDetailsService.findOneBy({
+      where: {
+        accountNumber: createDto.receiverAccountNumber,
+        agency: createDto.receiverAgency,
+        accountType: createDto.receiverAccountType,
+      },
+    });
 
-    const newEntity = this.transactionRepository.create(createDto);
+    if (!senderBankingDetail || !receiverBankingDetail) {
+      throw new ForbiddenException('BankingDetails not found');
+    }
+
+    const senderUser = await this.userService.findOne(
+      senderBankingDetail.user?.id,
+    );
+    const receiverUser = await this.userService.findOne(
+      receiverBankingDetail.user?.id,
+    );
+
+    if (!senderUser || !receiverUser) {
+      throw new NotFoundException(
+        'Users not found! This must be an internal problem.',
+      );
+    }
+
+    const transaction: Partial<Transaction> = {
+      amount: createDto.amount,
+      description: createDto.description,
+      receiverUserId: receiverUser.id,
+      senderUserId: senderUser.id,
+    };
+
+    const newEntity = this.transactionRepository.create(transaction);
     return await this.transactionRepository.save(newEntity);
   }
 

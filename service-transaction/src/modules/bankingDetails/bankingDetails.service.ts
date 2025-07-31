@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 import { BankingDetails } from './bankingDetails.entity';
 
 @Injectable()
@@ -18,6 +18,12 @@ export class BankingDetailsService {
     return await this.bankingDetailsRepository.findOne({
       where: { id },
     });
+  }
+
+  async findOneBy(
+    options: FindOneOptions<BankingDetails>,
+  ): Promise<BankingDetails | undefined> {
+    return await this.bankingDetailsRepository.findOne(options);
   }
 
   findAll(): Promise<BankingDetails[]> {
