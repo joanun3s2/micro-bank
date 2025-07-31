@@ -1,7 +1,17 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { KafkaService } from '../../kafka/service/kafka.service';
 import { UserService } from './user.service';
 import { User } from './user.entity';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('users')
 export class UserController {
@@ -38,22 +48,9 @@ export class UserController {
     return result;
   }
 
-  //TODO: work on this
   @Patch(':id/profile-picture')
-  remove(@Param('id') id: number) {
-    // return this.userService.update(id);
-  }
-
-  // For testing purposes
-  @Post('test')
-  async sendTestMessage() {
-    await this.kafkaService.sendMessage('user_created', {
-      id: Date.now(),
-      name: 'João',
-    });
-
-    console.log('Message sent');
-
-    return { status: 'sent' };
+  @UseInterceptors(FileInterceptor('file'))
+  remove(@Param('id') id: number, @UploadedFile() file: Express.Multer.File) {
+    return this.userService.updateProfilePicture(id, file);
   }
 }
