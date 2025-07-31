@@ -1,7 +1,9 @@
-import 'reflect-metadata';
 import { DataSource } from 'typeorm';
-import { User } from './entity/User';
+
 import { ConfigService } from './config/service/config.service';
+
+import { BankingDetails } from './modules/bankingDetails/bankingDetails';
+import { User } from './modules/user/user.entity';
 
 export const getAppDataSource = (configService: ConfigService) => {
   return new DataSource({
@@ -13,8 +15,7 @@ export const getAppDataSource = (configService: ConfigService) => {
     database: configService.get('CLIENT_DATABASE_NAME'),
     synchronize: true,
     logging: false,
-    entities: [User],
-    migrations: [],
+    entities: [User, BankingDetails],
     subscribers: [],
   });
 };

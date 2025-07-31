@@ -1,5 +1,4 @@
-import { Controller, Post } from '@nestjs/common';
-import { KafkaService } from '../../kafka/service/kafka.service';
+import { Controller } from '@nestjs/common';
 import { EventPattern } from '@nestjs/microservices';
 
 @Controller('user')

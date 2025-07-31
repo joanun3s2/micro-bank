@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { KafkaModule } from '../../kafka/feature/kafka.module';
-import { UserController } from '../user/user.controller';
+import { UserController } from './user.controller';
 
 @Module({
   imports: [KafkaModule],
