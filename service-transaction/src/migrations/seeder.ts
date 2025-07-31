@@ -112,6 +112,7 @@ export const seed = async (dataSource: DataSource) => {
   for (const transactionsItem of transactionsSeed) {
     const existing = await transactionRepository.findOneBy({
       senderUserId: transactionsItem.senderUserId,
+      receiverUserId: transactionsItem.receiverUserId,
     });
 
     if (existing) {
