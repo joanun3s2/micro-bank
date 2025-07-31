@@ -22,14 +22,8 @@ export class TransactionController {
     return this.transactionService.create(createDto);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: number, @Body() createDto: Partial<Transaction>) {
-    return this.transactionService.update(id, createDto);
-  }
-
-  //TODO: work on this
-  @Patch(':id/profile-picture')
-  remove(@Param('id') id: number) {
-    // return this.transactionService.update(id);
+  @Get('user/:id')
+  getByUserId(@Param('id') id: number) {
+    return this.transactionService.findAllByUserId(id);
   }
 }

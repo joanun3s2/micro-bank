@@ -82,6 +82,12 @@ export class TransactionService {
     return await this.transactionRepository.save(newEntity);
   }
 
+  async findAllByUserId(id: number): Promise<Transaction[] | undefined> {
+    return await this.transactionRepository.find({
+      where: [{ senderUserId: id }, { receiverUserId: id }],
+    });
+  }
+
   async update(
     id: number,
     updateDto: Partial<Transaction>,
