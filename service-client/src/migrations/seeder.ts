@@ -10,25 +10,30 @@ export const seed = async (dataSource: DataSource) => {
 
   const userSeed = [
     {
-      firstName: 'Timber',
-      lastName: 'Saw',
+      name: 'Timber Saw',
+      email: 'timber@me.com',
+      address: 'Rua A, 123',
       age: 27,
     },
     {
-      firstName: 'Joao',
-      lastName: 'Paulo',
+      name: 'Joao Paulo',
+      email: 'joao@me.com.br',
+      address: 'Rua B, 456',
       age: 26,
     },
     {
-      firstName: 'Bruno',
-      lastName: 'Loomi',
+      name: 'Bruno Loomi',
+      email: 'bruno@me.com',
+      address: 'Rua C, 789',
       age: 19,
     },
   ];
 
-  for (const userItem of userSeed) {
+  const createdUsers: User[] = [];
+
+  for await (const userItem of userSeed) {
     const existing = await userRepository.findOneBy({
-      firstName: userItem.firstName,
+      name: userItem.name,
     });
 
     if (existing) {
@@ -36,26 +41,28 @@ export const seed = async (dataSource: DataSource) => {
     }
 
     const user = userRepository.create(userItem);
-    await userRepository.save(user);
+    const userCreated = await userRepository.save(user);
+
+    createdUsers.push(userCreated);
   }
 
   console.log('Seeded users.');
 
   const bankingDetailsSeed = [
     {
-      userId: 1,
+      user: createdUsers[0],
       accountType: AccountType.CORRENTE,
       agency: 12,
       accountNumber: 5678,
     },
     {
-      userId: 2,
+      user: createdUsers[1],
       accountType: AccountType.POUPANCA,
       agency: 12,
       accountNumber: 1234,
     },
     {
-      userId: 3,
+      user: createdUsers[2],
       accountType: AccountType.CORRENTE,
       agency: 34,
       accountNumber: 9012,
@@ -64,7 +71,8 @@ export const seed = async (dataSource: DataSource) => {
 
   for (const bankingDetailsItem of bankingDetailsSeed) {
     const existing = await bankingDetailsRepository.findOneBy({
-      userId: bankingDetailsItem.userId,
+      accountNumber: bankingDetailsItem.accountNumber,
+      agency: bankingDetailsItem.agency,
     });
 
     if (existing) {

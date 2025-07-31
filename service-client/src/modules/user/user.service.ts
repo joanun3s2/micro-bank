@@ -15,7 +15,10 @@ export class UserService {
   ) {}
 
   async findOne(id: number): Promise<User | undefined> {
-    return await this.userRepository.findOneBy({ id });
+    return await this.userRepository.findOne({
+      where: { id },
+      relations: ['bankingDetails'],
+    });
   }
 
   findAll(): Promise<User[]> {
@@ -40,7 +43,7 @@ export class UserService {
   }
 
   async update(id: number, updateDto: Partial<User>): Promise<User | null> {
-    const entity = await this.userRepository.findOneBy({ sourceId: id });
+    const entity = await this.userRepository.findOneBy({ id });
 
     if (!entity) {
       throw new NotFoundException('User not found');
