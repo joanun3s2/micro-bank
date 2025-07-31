@@ -7,6 +7,7 @@ import { UserModule } from './modules/user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './modules/user/user.entity';
 import { BankingDetails } from './modules/bankingDetails/bankingDetails';
+import { BankingDetailsModule } from './modules/bankingDetails/bankingDetails.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { BankingDetails } from './modules/bankingDetails/bankingDetails';
     ConfigModule,
     KafkaModule,
     UserModule,
+    BankingDetailsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
