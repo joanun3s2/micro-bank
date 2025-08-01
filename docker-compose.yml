@@ -18,6 +18,22 @@ services:
       KAFKA_ADVERTISED_LISTENERS: '${KAFKA_ADVERTISED_LISTENERS}'
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: '${KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR}'
 
+  auth-service:
+    build:
+      context: service-auth
+      dockerfile: Dockerfile
+    ports:
+      - '${AUTH_PORT}:${AUTH_PORT}'
+    environment:
+      - PORT=${AUTH_PORT}
+    env_file:
+      - .env
+    volumes:
+      - ./service-auth:/app
+      - /app/node_modules
+    command: npm run dev
+    restart: 'always'
+
   client-database:
     container_name: client-database
     environment:
