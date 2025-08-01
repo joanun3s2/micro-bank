@@ -28,6 +28,8 @@ $ npm run setup
 
 ## Compile and run the project
 
+To run the projects individually follow:
+
 ```bash
 # will run in dev mode on a detached container
 $ npm run start
@@ -37,6 +39,13 @@ $ npm run start:dev
 
 # production mode
 $ npm run start:prod
+```
+
+But when in the root directory and you want to run all that is needed to start using the whole feature, just run the setup and everything will be set automatically and ready for start using:
+
+```bash
+# will run the general setup which will make all services setup individually and start them in detached mode
+$ ./bin/setup.sh
 ```
 
 ## Run tests
