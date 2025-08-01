@@ -41,13 +41,20 @@ $ npm run start:prod
 
 ## Run tests
 
+The tests are individuals for each service, so you need to navigate to the directory of the one you want to test and run the following.
+
 ```bash
 # unit tests
 $ npm run test
 
+# test coverage
+$ npm run test:cov
+
 # e2e tests
-$ npm run test:e2e
+$ npm run test:e2e (not working yet)
 ```
+
+For more details about the testing, read TESTING.md.
 
 ## Deployment
 
@@ -66,6 +73,7 @@ Check out a few tools or extensions that may come in handy when working with pro
   - Docker
   - Prettier
   - ESLint
+  - Windsurf
 - Apps
   - DBeaver
   - Insomnia
