@@ -4,6 +4,10 @@ cp .env.example .env
 
 docker-compose down
 
+echo setting up auth service
+
+docker compose up -d --build auth-service
+
 echo setting up kafka
 
 docker compose up -d zookeeper kafka

@@ -7,6 +7,7 @@ import {
   TokenValidationRequest,
   TokenValidationResponse,
 } from "../types/auth";
+import { getAuth, signInWithCustomToken } from "firebase/auth";
 
 export class AuthController {
   async signup(req: Request, res: Response): Promise<void> {
@@ -67,6 +68,12 @@ export class AuthController {
       const userRecord = await auth.getUserByEmail(email);
 
       const customToken = await auth.createCustomToken(userRecord.uid);
+
+      // TODO: The custom token is not what we want but the idToken
+      // Actually it is not working to validate the token for that reason so it must be fixed
+      const authMethod = getAuth();
+      const result = await signInWithCustomToken(authMethod, customToken);
+      const idToken = await result.user.getIdToken();
 
       const response: AuthResponse = {
         success: true,
